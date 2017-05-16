@@ -192,7 +192,7 @@ def eval_condition(condition, values, find_out=None):
     param, inst, op, val = condition
     if find_out:
         find_out(param, inst) # get more values for this param
-    total = sum(cf for known_val, cf in values.items() if op(known_val, val))
+    total = sum(cf for known_val, cf in list(values.items()) if op(known_val, val))
     
     logging.debug('Condition [%s] has a certainty factor of %f' %
                   (print_condition(condition), total))
@@ -267,8 +267,8 @@ class Rule(object):
         self.raw_conclusions = conclusions
     
     def __str__(self):
-        prems = map(print_condition, self.raw_premises)
-        concls = map(print_condition, self.raw_conclusions)
+        prems = list(map(print_condition, self.raw_premises))
+        concls = list(map(print_condition, self.raw_conclusions))
         templ = 'RULE %d\nIF\n\t%s\nTHEN %f\n\t%s'
         return templ % (self.num, '\n\t'.join(prems), self.cf, '\n\t'.join(concls))
     
@@ -399,13 +399,13 @@ def use_rules(values, instances, rules, find_out=None, track_rules=None):
 # parameters, and rules, current instances of contexts and the known values of
 # their parameters, and data for user introspection.
 
-def write(line): print line
+def write(line): print(line)
 
 class Shell(object):
     
     """An expert system shell."""
     
-    def __init__(self, read=raw_input, write=write):
+    def __init__(self, read=input, write=write):
         """
         Create a new shell.  The functions read and write are used to get
         input from the user and display information, respectively.

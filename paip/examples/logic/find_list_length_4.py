@@ -21,9 +21,9 @@ def main():
     logic.store(db, length_nil)
     logic.store(db, length_one)
 
-    print 'Database:'
-    print db
-    print
+    print('Database:')
+    print(db)
+    print()
 
     four = logic.Relation(
         '+1', [logic.Relation(
@@ -31,7 +31,7 @@ def main():
                         '+1', [logic.Relation('+1', [zero])])])])
     
     query = logic.Relation('length', (x, four))
-    print 'Query:', query
-    print
+    print('Query:', query)
+    print()
     
     logic.prolog_prove([query], db)

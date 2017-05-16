@@ -40,24 +40,24 @@ def interact(prompt, rules, default_responses):
         try:
             # Remove the punctuation from the input and convert to upper-case
             # to simplify matching.
-            input = remove_punct(raw_input(prompt).upper())
-            if not input:
+            input_sentence = remove_punct(input(prompt).upper())
+            if not input_sentence:
                 continue
         except:
             break
-        print respond(rules, input, default_responses)
+        print(respond(rules, input_sentence, default_responses))
 
 
-def respond(rules, input, default_responses):
+def respond(rules, input_sentence, default_responses):
     """Respond to an input sentence according to the given rules."""
 
-    input = input.split() # match_pattern expects a list of tokens
+    input_sentence = input_sentence.split() # match_pattern expects a list of tokens
 
     # Look through rules and find input patterns that matches the input.
     matching_rules = []
     for pattern, transforms in rules:
         pattern = pattern.split()
-        replacements = match_pattern(pattern, input)
+        replacements = match_pattern(pattern, input_sentence)
         if replacements:
             matching_rules.append((transforms, replacements))
 
@@ -76,13 +76,13 @@ def respond(rules, input, default_responses):
         replacement = ' '.join(switch_viewpoint(replacement))
         if replacement:
             response = response.replace('?' + variable, replacement)
-    
+
     return response
-    
+
 
 ## Pattern matching
 
-def match_pattern(pattern, input, bindings=None):
+def match_pattern(pattern, input_sentence, bindings=None):
     """
     Determine if the input string matches the given pattern.
 
@@ -97,10 +97,10 @@ def match_pattern(pattern, input, bindings=None):
     # Check to see if matching failed before we got here.
     if bindings is False:
         return False
-    
+
     # When the pattern and the input are identical, we have a match, and
     # no more bindings need to be found.
-    if pattern == input:
+    if pattern == input_sentence:
         return bindings
 
     bindings = bindings or {}
@@ -109,22 +109,22 @@ def match_pattern(pattern, input, bindings=None):
     if is_segment(pattern):
         token = pattern[0] # segment variable is the first token
         var = token[2:] # segment variable is of the form ?*x
-        return match_segment(var, pattern[1:], input, bindings)
+        return match_segment(var, pattern[1:], input_sentence, bindings)
     elif is_variable(pattern):
         var = pattern[1:] # single variables are of the form ?foo
-        return match_variable(var, [input], bindings)
-    elif contains_tokens(pattern) and contains_tokens(input):
+        return match_variable(var, [input_sentence], bindings)
+    elif contains_tokens(pattern) and contains_tokens(input_sentence):
         # Recurse:
         # try to match the first tokens of both pattern and input.  The bindings
         # that result are used to match the remainder of both lists.
         return match_pattern(pattern[1:],
-                             input[1:],
-                             match_pattern(pattern[0], input[0], bindings))
+                             input_sentence[1:],
+                             match_pattern(pattern[0], input_sentence[0], bindings))
     else:
         return False
 
 
-def match_segment(var, pattern, input, bindings, start=0):
+def match_segment(var, pattern, input_sentence, bindings, start=0):
     """
     Match the segment variable against the input.
 
@@ -139,26 +139,26 @@ def match_segment(var, pattern, input, bindings, start=0):
     # If there are no words in pattern following var, we can just match var
     # to the remainder of the input.
     if not pattern:
-        return match_variable(var, input, bindings)
+        return match_variable(var, input_sentence, bindings)
 
     # Get the segment boundary word and look for the first occurrence in
     # the input starting from index start.
     word = pattern[0]
     try:
-        pos = start + input[start:].index(word)
+        pos = start + input_sentence[start:].index(word)
     except ValueError:
         # When the boundary word doesn't appear in the input, no match.
         return False
 
     # Match the located substring to the segment variable and recursively
     # pattern match using the resulting bindings.
-    var_match = match_variable(var, input[:pos], dict(bindings))
-    match = match_pattern(pattern, input[pos:], var_match)
+    var_match = match_variable(var, input_sentence[:pos], dict(bindings))
+    match = match_pattern(pattern, input_sentence[pos:], var_match)
 
     # If pattern matching fails with this substring, try a longer one.
     if not match:
-        return match_segment(var, pattern, input, bindings, start + 1)
-    
+        return match_segment(var, pattern, input_sentence, bindings, start + 1)
+
     return match
 
 
@@ -190,7 +190,7 @@ def is_variable(pattern):
             and pattern[0] == '?'
             and len(pattern) > 1
             and pattern[1] != '*'
-            and pattern[1] in string.letters
+            and pattern[1] in string.ascii_letters
             and ' ' not in pattern)
 
 
@@ -201,7 +201,7 @@ def is_segment(pattern):
             and len(pattern[0]) > 2
             and pattern[0][0] == '?'
             and pattern[0][1] == '*'
-            and pattern[0][2] in string.letters
+            and pattern[0][2] in string.ascii_letters
             and ' ' not in pattern[0])
 
 

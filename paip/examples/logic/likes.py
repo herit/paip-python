@@ -35,13 +35,13 @@ def main():
     logic.store(db, slk)
     logic.store(db, rlc)
 
-    print 'Database:'
-    print db
-    print
+    print('Database:')
+    print(db)
+    print()
     
     query = logic.Relation('likes', (sandy, logic.Var('who')))
-    print 'Query:', str(query)
-    print
+    print('Query:', str(query))
+    print()
 
     logic.prolog_prove([query], db)
 

@@ -48,7 +48,7 @@ def main():
     finish = problem['finish']
     ops = problem['ops']
     for action in gps(start, finish, ops):
-        print action
+        print(action)
 
 if __name__ == '__main__':
     main()

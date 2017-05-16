@@ -115,7 +115,7 @@ Intelligence Programming" by Peter Norvig.
 ## Data type definitions
 
 # First, we define the types of data represented in our system.  These include:
-# 
+#
 # - *atoms*, which represent literal data such as numbers and strings;
 # - *variables*, which represent undetermined atoms and relations;
 # - *relations*, which define relationships between atoms, variables, and
@@ -136,15 +136,18 @@ Intelligence Programming" by Peter Norvig.
 class Atom(object):
 
     """Represents any literal (symbol, number, string, etc)."""
-    
+
     def __init__(self, atom):
         self.atom = atom
-        
+
     def __repr__(self):
         return str(self.atom)
 
     def __eq__(self, other):
         return isinstance(other, Atom) and other.atom == self.atom
+
+    def __hash__(self):
+        return hash(self.atom)
 
     # These don't need to do anything for Atoms, since they don't contain Vars.
     def rename_vars(self, replacements): return self
@@ -165,10 +168,10 @@ class Var(object):
         v = Var('var%d' % Var.counter)
         Var.counter += 1
         return v
-    
+
     def __init__(self, var):
         self.var = var
-        
+
     def __repr__(self):
         return '?%s' % str(self.var)
 
@@ -188,11 +191,11 @@ class Var(object):
         Tries to find a non-Var binding to return by searching transitively
         through the bindings dictionary.
         """
-        
+
         binding = bindings.get(self)
 
         # While looking up the binding for self, we must detect:
-        # 
+        #
         # 1. That we are looking up the binding of a Var (otherwise meaningless)
         # 2. That we stop before reaching None, in the case that there is no
         #    terminal Atom in a transitive binding
@@ -210,7 +213,7 @@ class Var(object):
             return binding.bind_vars(bindings)
 
         return binding
-    
+
     def rename_vars(self, replacements):
         """Rename self with its value in replacements if it appears as a key."""
         return replacements.get(self, self)
@@ -223,11 +226,11 @@ class Var(object):
 class Relation(object):
 
     """A relationship (specified by a predicate) that holds between terms."""
-    
+
     def __init__(self, pred, args):
         self.pred = pred
         self.args = args
-        
+
     def __repr__(self):
         return '%s(%s)' % (self.pred, ', '.join(map(str, self.args)))
 
@@ -235,6 +238,9 @@ class Relation(object):
         return (isinstance(other, Relation)
                 and self.pred == other.pred
                 and list(self.args) == list(other.args))
+
+    def __hash__(self):
+        return hash(self.pred)
 
     def bind_vars(self, bindings):
         """Replace each Var in this relation with its bound term."""
@@ -261,7 +267,7 @@ class Relation(object):
 class Clause(object):
 
     """A clause with a head relation and some body relations."""
-    
+
     def __init__(self, head, body=None):
         self.head = head
         self.body = body or []
@@ -349,7 +355,7 @@ def define_procedure(db, name, proc):
 # replaced by the bindings, can be considered equaivalent.
 
 # A few small examples:
-# 
+#
 # - Unification of `likes(Sarah, Joe)` and `likes(?y, Joe)` will succeed if
 #   either
 #
@@ -362,10 +368,10 @@ def define_procedure(db, name, proc):
 #     - ?z is unbound, in which case it can be bound to ?y; or
 #     - ?y and ?z are both already bound to each other, or to the same value
 #       (perhaps transitively).
-# 
+#
 # - Unfication of `likes(Sarah, Joe)` and `?x` will succeed only if ?x is
 #   already bound to `likes(Sarah, Joe)` or is unbound.
-# 
+#
 # - Unification of `likes(Sarah, Joe)` and `Bob` will always fail--these are not
 #   equal, and no bindings of variables will result in equivalence.
 #
@@ -416,7 +422,7 @@ def unify(x, y, bindings):
         if len(x.args) != len(y.args):
             return False
 
-        # Unify corresponding terms in the relations.
+        # z corresponding terms in the relations.
         for i, xi in enumerate(x.args):
             yi = y.args[i]
             bindings = unify(xi, yi, bindings)
@@ -489,7 +495,7 @@ def unify(x, y, bindings):
 #      body relation of the clause.  If proving fails for any body relation, we
 #      move on to the next retrieved candidate clause.
 #
-#      So, continuing our example, if we can prove that `likes(Me, StirFry)` and 
+#      So, continuing our example, if we can prove that `likes(Me, StirFry)` and
 #      `likes(Me, Swimming)`, then we will have proved `likes(You, Me)`.  If we
 #      fail to prove either of these, we will move on to the next retrieved
 #      clause, and try to prove `likes(?x, Programmers)`.
@@ -511,15 +517,15 @@ def prove(goal, bindings, db, remaining=None):
     # False bindings means we failed somewhere earlier, so re-fail.
     if bindings == False:
         return False
-    
+
     logging.debug('Prove %s (bindings=%s)' % (goal, bindings))
     remaining = remaining or []
-    
+
     # Find the clauses in the database that might help us prove goal.
     query = db.get(goal.pred)
     if not query:
         return False
-    
+
     if not isinstance(query, list):
         # If the retrieved data from the database isn't a list of clauses,
         # it must be a Python function--call it and return the results.
@@ -530,7 +536,7 @@ def prove(goal, bindings, db, remaining=None):
     # Try to use the retrieved clauses to prove the goal.
     for clause in query:
         logging.debug('Trying candidate clause %s for goal %s' % (clause, goal))
-        
+
         # First, rename the variables in clause so they don't collide with
         # those in goal.
         renamed = clause.recursive_rename()
@@ -551,7 +557,7 @@ def prove(goal, bindings, db, remaining=None):
         # We need to prove the subgoals of the candidate clause before
         # using it to prove goal.  Then prove the remaining goals as well.
         extended = prove_all(renamed.body + remaining, unified, db)
-        
+
         # If we can't prove all the subgoals, or the bindings that result from
         # proving the subgoals make it so that the remaining goals can't be
         # proved, move on.
@@ -563,7 +569,7 @@ def prove(goal, bindings, db, remaining=None):
 
     logging.debug('Failed to prove %s' % goal)
     return False
-    
+
 def prove_all(goals, bindings, db):
     """Prove all the goals with the given bindings and rule database."""
     if bindings == False:
@@ -606,7 +612,7 @@ def prolog_prove(goals, db):
             vars.extend(goal.get_vars())
         db['display_bindings'] = display_bindings
         prove_all(goals + [Relation('display_bindings', vars)], {}, db)
-    print 'No.'
+    print('No.')
 
 def display_bindings(vars, bindings, db, remaining):
     """
@@ -617,10 +623,10 @@ def display_bindings(vars, bindings, db, remaining):
     the remaining goals.
     """
     if not vars:
-        print 'Yes.'
+        print('Yes.')
     for var in vars:
-        print var, ':', var.lookup(bindings)
-    if raw_input('Continue? ').strip().lower() in ('yes', 'y'):
+        print(var, ':', var.lookup(bindings))
+    if input('Continue? ').strip().lower() in ('yes', 'y'):
         return False
     return prove_all(remaining, bindings, db)
 

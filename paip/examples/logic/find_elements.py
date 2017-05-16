@@ -28,12 +28,12 @@ def main():
                 'pair', (logic.Atom('bar'), logic.Relation(
                         'pair', (logic.Atom('baz'), nil))))))
 
-    print 'Database:'
-    print db
-    print
+    print('Database:')
+    print(db)
+    print()
 
     query = logic.Relation('member', (x, list))
-    print 'Query:', query
-    print
+    print('Query:', query)
+    print()
     
     logic.prolog_prove([query], db)

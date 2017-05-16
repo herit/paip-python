@@ -122,11 +122,11 @@ import logging
 from paip.emycin import Parameter, Context, Rule, Shell
 
 def report_findings(findings):
-    for inst, result in findings.items():
-        print 'Findings for %s-%d:' % (inst[0], inst[1])
-        for param, vals in result.items():
-            possibilities = ['%s: %f' % (val[0], val[1]) for val in vals.items()]
-            print '%s: %s' % (param, ', '.join(possibilities))
+    for inst, result in list(findings.items()):
+        print('Findings for %s-%d:' % (inst[0], inst[1]))
+        for param, vals in list(result.items()):
+            possibilities = ['%s: %f' % (val[0], val[1]) for val in list(vals.items())]
+            print('%s: %s' % (param, ', '.join(possibilities)))
         
 def main():
     sh = Shell()

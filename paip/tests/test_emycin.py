@@ -100,10 +100,10 @@ class ValuesTests(unittest.TestCase):
         }
     
     def test_get_vals_empty(self):
-        self.assertEqual(0, len(get_vals(self.values, 'happy', ('patient', 1)).keys()))
+        self.assertEqual(0, len(list(get_vals(self.values, 'happy', ('patient', 1)).keys())))
     
     def test_get_vals(self):
-        self.assertEqual(3, len(get_vals(self.values, 'age', ('patient', 0)).keys()))
+        self.assertEqual(3, len(list(get_vals(self.values, 'age', ('patient', 0)).keys())))
         
     def test_get_cf_none(self):
         self.assertEqual(CF.unknown, get_cf(self.values, 'age', ('patient', 0), 30))

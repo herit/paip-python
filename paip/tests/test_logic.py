@@ -155,9 +155,9 @@ class ClauseTests(unittest.TestCase):
         renamed = member.recursive_rename()
         bindings = logic.unify(renamed, member, {})
 
-        self.assertTrue(x in bindings or x in bindings.values())
-        self.assertTrue(y in bindings or y in bindings.values())
-        self.assertTrue(z in bindings or z in bindings.values())
+        self.assertTrue(x in bindings or x in list(bindings.values()))
+        self.assertTrue(y in bindings or y in list(bindings.values()))
+        self.assertTrue(z in bindings or z in list(bindings.values()))
 
     def test_get_vars(self):
         a = logic.Atom('a')

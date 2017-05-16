@@ -22,12 +22,12 @@ def main():
     logic.store(db, member_last)
     logic.store(db, member_rest)
 
-    print 'Database:'
-    print db
-    print
+    print('Database:')
+    print(db)
+    print()
 
     query = logic.Relation('member', (logic.Atom('foo'), x))
-    print 'Query:', query
-    print
+    print('Query:', query)
+    print()
     
     logic.prolog_prove([query], db)

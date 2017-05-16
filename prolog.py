@@ -43,8 +43,8 @@ class Parser(object):
     def __init__(self, lexer):
         self.lexer = lexer
         self.lookahead = []
-        for i in xrange(Parser.k):
-            self.lookahead.append(lexer.next())
+        for i in range(Parser.k):
+            self.lookahead.append(next(lexer))
 
     def la(self, i):
         return self.lookahead[i-1]
@@ -54,7 +54,7 @@ class Parser(object):
         if tt != exp_tt:
             raise ParseError('Expected %s, got %s' % (exp_tt, tt))
         self.lookahead.pop(0)
-        self.lookahead.append(self.lexer.next())
+        self.lookahead.append(next(self.lexer))
         return tok
 
     def command(self):
@@ -238,7 +238,7 @@ class Lexer(object):
         while self.ch != '\n':
             self.eat()
     
-    def next(self):
+    def __next__(self):
         while self.pos < len(self.line):
             if self.is_ws():
                 self.eat()
@@ -273,7 +273,7 @@ class Lexer(object):
 def tokens(line):
     lexer = Lexer(line)
     while True:
-        tokt, tok = lexer.next()
+        tokt, tok = next(lexer)
         if tokt == EOF:
             return
         yield tokt, tok
@@ -285,17 +285,17 @@ def parse(line):
 
 
 def print_db(db):
-    print 'Database:'
+    print('Database:')
     longest = -1
     for pred in db:
         if len(pred) > longest:
             longest = len(pred)
-    for pred, items in db.items():
+    for pred, items in list(db.items()):
         if not isinstance(items, list):
             continue
-        print '%s:' % pred
+        print('%s:' % pred)
         for item in items:
-            print '\t', item
+            print('\t', item)
 
 
 def read_db(db_file):
@@ -345,7 +345,7 @@ argparser.add_argument('--db',
 
 
 def main():
-    print 'Welcome to PyLogic.  Type "help" for help.'
+    print('Welcome to PyLogic.  Type "help" for help.')
     
     args = argparser.parse_args()
     db = read_db(args.db_file) if args.db_file else {}
@@ -355,7 +355,7 @@ def main():
     print_db(db)
     while True:
         try:
-            line = raw_input('>> ')
+            line = input('>> ')
         except EOFError:
             break
         if not line:
@@ -363,27 +363,27 @@ def main():
         if line == 'quit':
             break
         if line == 'help':
-            print help
+            print(help)
             continue
         try:
             q = parse(line)
         except ParseError as e:
-            print e
+            print(e)
             continue
         except TokenError as e:
-            print e
+            print(e)
             continue
 
         if isinstance(q, logic.Relation):
             try:
                 logic.prolog_prove([q], db)
             except KeyboardInterrupt:
-                print 'Cancelled.'
+                print('Cancelled.')
         elif isinstance(q, logic.Clause):
             logic.store(db, q)
             print_db(db)
 
-    print 'Goodbye.'
+    print('Goodbye.')
 
     
 if __name__ == '__main__':

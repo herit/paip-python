@@ -34,13 +34,13 @@ def map_successors(location):
 
 def print_map(map):
     """Pretty-prints the given map to standard output."""
-    print '-' * (2 * len(map) + 3)
+    print('-' * (2 * len(map) + 3))
     for row in map:
-        print '|',
+        print('|', end=' ')
         for col in row:
-            print '%s' % (col if col == 1 or col == 'X' else ' '),
-        print '|'
-    print '-' * (2 * len(map) + 3)
+            print('%s' % (col if col == 1 or col == 'X' else ' '), end=' ')
+        print('|')
+    print('-' * (2 * len(map) + 3))
 
 
 ## Running from the command line

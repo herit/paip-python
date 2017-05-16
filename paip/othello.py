@@ -92,7 +92,7 @@ DIRECTIONS = (UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT)
 
 def squares():
     """List all the valid squares on the board."""
-    return [i for i in xrange(11, 89) if 1 <= (i % 10) <= 8]
+    return [i for i in range(11, 89) if 1 <= (i % 10) <= 8]
 
 def initial_board():
     """Create a new board with the initial black and white positions filled."""
@@ -107,8 +107,8 @@ def initial_board():
 def print_board(board):
     """Get a string representation of the board."""
     rep = ''
-    rep += '  %s\n' % ' '.join(map(str, range(1, 9)))
-    for row in xrange(1, 9):
+    rep += '  %s\n' % ' '.join(map(str, list(range(1, 9))))
+    for row in range(1, 9):
         begin, end = 10*row + 1, 10*row + 9
         rep += '%d %s\n' % (row, ' '.join(board[begin:end]))
     return rep

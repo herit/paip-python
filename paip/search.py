@@ -258,7 +258,7 @@ def insert_path(path, paths, compare):
     list sorted with respect to some comparison function `compare`, which
     takes two `Path`s as arguments and returns a number.
     """
-    for i in xrange(len(paths)):
+    for i in range(len(paths)):
         if compare(path, paths[i]) <= 0:
             paths.insert(i, path)
             return

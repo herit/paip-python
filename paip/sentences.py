@@ -78,4 +78,4 @@ def generate_tree(grammar, phrase):
 
 
 if __name__ == '__main__':
-    print generate(BIGGER_ENGLISH, 'sentence')
+    print(generate(BIGGER_ENGLISH, 'sentence'))

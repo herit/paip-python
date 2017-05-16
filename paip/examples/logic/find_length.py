@@ -21,9 +21,9 @@ def main():
     logic.store(db, length_nil)
     logic.store(db, length_one)
 
-    print 'Database:'
-    print db
-    print
+    print('Database:')
+    print(db)
+    print()
 
     list = logic.Relation(
         'pair', (x, logic.Relation(
@@ -31,7 +31,7 @@ def main():
                         'pair', (z, nil))))))
     
     query = logic.Relation('length', (list, a))
-    print 'Query:', query
-    print
+    print('Query:', query)
+    print()
     
     logic.prolog_prove([query], db)

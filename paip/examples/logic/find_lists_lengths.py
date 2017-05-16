@@ -38,9 +38,9 @@ def main():
     logic.store(db, member_last)
     logic.store(db, member_rest)
 
-    print 'Database:'
-    print db
-    print
+    print('Database:')
+    print(db)
+    print()
 
     four = logic.Relation(
         '+1', [logic.Relation(
@@ -52,7 +52,7 @@ def main():
     has_foo = logic.Relation('member', (foo, x))
     length_4 = logic.Relation('length', (x, a))
     
-    print 'Query:', has_foo, length_4
-    print
+    print('Query:', has_foo, length_4)
+    print()
 
     logic.prolog_prove([has_foo, length_4], db)

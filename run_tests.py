@@ -12,5 +12,5 @@ for file in os.listdir(tests_dir):
         continue
     qual_file = os.path.join(tests_dir, file)
     module = qual_file.replace('/', '.')[:-3] # leave off .py
-    print 'Testing module %s' % module
+    print('Testing module %s' % module)
     unittest.main(module, exit=False)
