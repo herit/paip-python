@@ -44,7 +44,7 @@ Get the source code from [GitHub](https://github.com/dhconnelly/paip-python) or
 just [download](https://github.com/dhconnelly/paip-python/zipball/master) the
 latest version.
 
-Also make sure you have [Python 2.7](http://python.org/download/releases).
+Also make sure you have [Python 3.6.1](http://python.org/download/releases).
 
 - To run the examples: `python run_examples.py` and follow the prompts.
 - To run the Prolog interpreter: `./prolog.py`.  Pass the `-h` flag for more
