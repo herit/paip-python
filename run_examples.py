@@ -11,7 +11,7 @@ parser.add_argument('--log', action='store_true', help='Turn on logging')
 def main():
     print('Please choose an example to run:')
     modules = []
-    for i, name in enumerate(discover_modules('paip\examples')):
+    for i, name in enumerate(discover_modules('paip/examples')):
         __import__(name)
         module = sys.modules[name]
         modules.append(module)

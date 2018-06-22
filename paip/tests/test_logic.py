@@ -41,14 +41,14 @@ class VarTests(unittest.TestCase):
         v1 = logic.Var('x')
         begin = logic.Var.counter
         v2 = v1.rename_vars({v1: logic.Var.get_unused_var()})
-        
+
         self.assertEqual(logic.Var('var%d' % begin), v2)
         self.assertEqual(begin + 1, logic.Var.counter)
 
     def test_get_vars(self):
         x = logic.Var('x')
         self.assertEqual([x], x.get_vars())
-    
+
 
 class RelationTests(unittest.TestCase):
     def test_bind_vars(self):
@@ -56,7 +56,7 @@ class RelationTests(unittest.TestCase):
         b = logic.Atom('b')
         x = logic.Var('x')
         y = logic.Var('y')
-        
+
         r = logic.Relation('likes', (a, x, y))
         s = logic.Relation('likes', (a, b, y))
         bindings = { x: b }
@@ -69,7 +69,7 @@ class RelationTests(unittest.TestCase):
         p2 = logic.Relation('pair', (a, y))
         p1 = logic.Relation('pair', (x, p2))
         vs = p1.get_vars()
-        
+
         begin = logic.Var.counter
         rep = {v: logic.Var.get_unused_var() for v in vs}
 
@@ -93,7 +93,7 @@ class RelationTests(unittest.TestCase):
         p2 = logic.Relation('pair', (a, p3))
         p1 = logic.Relation('pair', (y, p2))
         self.assertEqual(set([x, y]), set(p1.get_vars()))
-        
+
 
 class ClauseTests(unittest.TestCase):
     def test_bind_vars(self):
@@ -103,7 +103,7 @@ class ClauseTests(unittest.TestCase):
         x = logic.Var('x')
         y = logic.Var('y')
         z = logic.Var('z')
-        
+
         r = logic.Relation('likes', (x, y, a))
         s = logic.Relation('likes', (y, a, z))
         t = logic.Relation('hates', (z, b, x))
@@ -138,18 +138,18 @@ class ClauseTests(unittest.TestCase):
                                   (newy, logic.Relation('pair', (newx, newz))))
         rule3 = logic.Clause(logic.Relation('member', (newx, new_list)),
                              (logic.Relation('is_list', [new_list]), new_list))
-        
+
         self.assertEqual(rule3, rule2)
 
     def test_recursive_rename(self):
-        list = logic.Var('list')
+        lst = logic.Var('list')
         x = logic.Var('x')
         y = logic.Var('y')
         z = logic.Var('z')
 
-        member = logic.Clause(logic.Relation('member', (x, list)),
-                            [logic.Relation('first', (list, y)),
-                             logic.Relation('rest', (list, z)),
+        member = logic.Clause(logic.Relation('member', (x, lst)),
+                            [logic.Relation('first', (lst, y)),
+                             logic.Relation('rest', (lst, z)),
                              logic.Relation('member', (x, z))])
 
         renamed = member.recursive_rename()
@@ -355,7 +355,7 @@ class UnificationTests(unittest.TestCase):
         c = logic.Clause(r, [s, v])
         d = logic.Clause(t, [s, u])
         self.assertEqual({x: jorge, y: joe}, logic.unify(c, d, {}))
-    
+
 
 class ProveTests(unittest.TestCase):
     def test_prove_no_relevant_clauses(self):
@@ -462,6 +462,6 @@ class ProveTests(unittest.TestCase):
 
         goal = logic.Relation('likes', (joe, x))
         display = logic.Relation('prim', 'foo')
-        
+
         bindings = logic.prove_all([goal, display], {}, db)
         self.assertEqual(['foo'], things)

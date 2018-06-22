@@ -177,7 +177,7 @@ class Lexer(object):
 
     def is_ws(self):
         return self.ch in (' ', '\t', '\n')
-    
+
     def DEFN_BEGIN(self):
         self.match('<')
         self.match('-')
@@ -196,7 +196,7 @@ class Lexer(object):
 
     def is_num(self):
         return self.is_number() or self.ch in ('+', '-')
-    
+
     def NUM(self):
         # get the leading sign
         sign = 1
@@ -237,7 +237,7 @@ class Lexer(object):
         self.match('#')
         while self.ch != '\n':
             self.eat()
-    
+
     def __next__(self):
         while self.pos < len(self.line):
             if self.is_ws():
@@ -268,7 +268,7 @@ class Lexer(object):
                 return COMMA, self.eat()
             raise TokenError('no token begins with %s' % self.ch)
         return EOF, EOF
-    
+
 
 def tokens(line):
     lexer = Lexer(line)
@@ -298,13 +298,18 @@ def print_db(db):
             print('\t', item)
 
 
-def read_db(db_file):
+def read_db(db_file_path):
     db = {}
-    for line in db_file:
-        if line == '\n': continue
-        q = parse(line)
-        if q:
-            logic.store(db, q)
+    try:
+        with open(db_file_path, 'r') as f:
+            for line in f:
+                if line == '\n': continue
+                q = parse(line)
+                if q:
+                    logic.store(db, q)
+    except:
+        print("File Not Found.")
+
     return db
 
 
@@ -339,16 +344,16 @@ argparser.add_argument('--logging',
                        help='Enable logging',
                        dest='log')
 argparser.add_argument('--db',
-                       type=file,
+#                       type=file,
                        help='Database file',
-                       dest='db_file')
+                       dest='db_file_path')
 
 
 def main():
     print('Welcome to PyLogic.  Type "help" for help.')
-    
+
     args = argparser.parse_args()
-    db = read_db(args.db_file) if args.db_file else {}
+    db = read_db(args.db_file_path) if args.db_file_path else {}
     if args.log:
         logging.basicConfig(level=logging.DEBUG)
 
@@ -385,6 +390,6 @@ def main():
 
     print('Goodbye.')
 
-    
+
 if __name__ == '__main__':
     main()
